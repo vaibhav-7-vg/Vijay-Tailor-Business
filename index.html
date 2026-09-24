@@ -3,43 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#151515">
+<meta name="theme-color" content="#17130d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Vijay Tailor's</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div id="toast"></div>
 
-<div class="app-shell">
+<div class="app">
 
 <aside class="sidebar">
 <div class="brand">
 <div class="brand-mark">VT</div>
 <div>
-<strong>VIJAY TAILOR'S</strong>
+<h2>VIJAY TAILOR'S</h2>
 <span>MEN'S SPECIALIST</span>
 </div>
 </div>
 
 <nav>
-<button class="nav-item active" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
-<button class="nav-item" data-page="orders"><i data-lucide="clipboard-list"></i><span>Orders</span></button>
-<button class="nav-item" data-page="customers"><i data-lucide="users"></i><span>Customers</span></button>
-<button class="nav-item" data-page="products"><i data-lucide="package"></i><span>Products</span></button>
-<button class="nav-item" data-page="reports"><i data-lucide="bar-chart-3"></i><span>Reports</span></button>
-<button class="nav-item" data-page="settings"><i data-lucide="settings"></i><span>Settings</span></button>
+<button class="nav-item active" data-page="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+<button class="nav-item" data-page="orders"><i data-lucide="clipboard-list"></i>Orders</button>
+<button class="nav-item" data-page="customers"><i data-lucide="users"></i>Customers</button>
+<button class="nav-item" data-page="products"><i data-lucide="shirt"></i>Products</button>
+<button class="nav-item" data-page="reports"><i data-lucide="bar-chart-3"></i>Reports</button>
+<button class="nav-item" data-page="settings"><i data-lucide="settings"></i>Settings</button>
 </nav>
 
-<div class="sidebar-footer">
+<div class="sidebar-bottom">
 <div class="shop-mini">
-<i data-lucide="store"></i>
-<div><strong>Business Mode</strong><span>Local Storage</span></div>
+<div class="mini-icon"><i data-lucide="store"></i></div>
+<div>
+<strong id="sideBusinessName">VIJAY TAILOR'S</strong>
+<span>Business Account</span>
+</div>
 </div>
 </div>
 </aside>
@@ -48,175 +52,396 @@
 
 <header class="topbar">
 <div>
-<button class="mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button>
+<button class="mobile-menu" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
 <h1 id="pageTitle">Dashboard</h1>
 <p id="pageSubtitle">Business overview</p>
 </div>
-<button class="primary-btn" id="newOrderBtn"><i data-lucide="plus"></i> New Order</button>
+<button class="header-action" onclick="openNewOrder()">
+<i data-lucide="plus"></i>
+<span>New Order</span>
+</button>
 </header>
 
-<section id="dashboard" class="page active">
+<section id="page-dashboard" class="page active">
+
+<div class="welcome-card">
+<div>
+<span class="eyebrow">TODAY'S BUSINESS</span>
+<h2>Welcome back</h2>
+<p>Manage orders, customers and payments from one place.</p>
+</div>
+<div class="welcome-icon"><i data-lucide="scissors"></i></div>
+</div>
+
 <div class="stats-grid">
-<div class="stat-card"><div class="stat-icon"><i data-lucide="indian-rupee"></i></div><span>Today's Sales</span><strong id="todaySales">₹0</strong><small id="todayOrders">0 orders</small></div>
-<div class="stat-card"><div class="stat-icon"><i data-lucide="clipboard-check"></i></div><span>Total Orders</span><strong id="totalOrders">0</strong><small>All orders</small></div>
-<div class="stat-card"><div class="stat-icon"><i data-lucide="wallet"></i></div><span>Balance Due</span><strong id="balanceDue">₹0</strong><small>Pending collection</small></div>
-<div class="stat-card"><div class="stat-icon"><i data-lucide="check-circle"></i></div><span>Ready Orders</span><strong id="readyOrders">0</strong><small>Awaiting collection</small></div>
+<div class="stat-card">
+<div class="stat-icon sales"><i data-lucide="indian-rupee"></i></div>
+<span>Today's Sales</span>
+<strong id="todaySales">₹0</strong>
+<small>Collected orders included</small>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon orders"><i data-lucide="shopping-bag"></i></div>
+<span>Total Orders</span>
+<strong id="totalOrders">0</strong>
+<small>All orders</small>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon pending"><i data-lucide="wallet"></i></div>
+<span>Pending Amount</span>
+<strong id="pendingAmount">₹0</strong>
+<small>Customer balance</small>
+</div>
+
+<div class="stat-card">
+<div class="stat-icon ready"><i data-lucide="package-check"></i></div>
+<span>Ready Orders</span>
+<strong id="readyOrders">0</strong>
+<small>Waiting for collection</small>
+</div>
 </div>
 
 <div class="dashboard-grid">
-<div class="panel">
-<div class="panel-head"><div><h2>Order Overview</h2><p>Current order status</p></div></div>
-<div id="statusOverview" class="status-list"></div>
-</div>
 
 <div class="panel">
-<div class="panel-head"><div><h2>Quick Actions</h2><p>Common business tasks</p></div></div>
-<div class="quick-grid">
-<button class="quick-card" onclick="openNewOrder()"><i data-lucide="plus-circle"></i><strong>New Order</strong><span>Create a new order</span></button>
-<button class="quick-card" onclick="showPage('customers')"><i data-lucide="users"></i><strong>Customers</strong><span>View customer records</span></button>
-<button class="quick-card" onclick="showPage('products')"><i data-lucide="package-plus"></i><strong>Products</strong><span>Manage pricing</span></button>
-<button class="quick-card" onclick="showPage('reports')"><i data-lucide="file-chart-column"></i><strong>Reports</strong><span>Business reports</span></button>
+<div class="panel-head">
+<div>
+<h3>Recent Orders</h3>
+<span>Latest customer orders</span>
 </div>
+<button class="text-btn" onclick="showPage('orders')">View all</button>
 </div>
-</div>
-
-<div class="panel">
-<div class="panel-head"><div><h2>Recent Orders</h2><p>Latest customer orders</p></div><button class="text-btn" onclick="showPage('orders')">View all</button></div>
 <div id="recentOrders"></div>
 </div>
-</section>
 
-<section id="orders" class="page">
-<div class="section-tools">
-<div class="search-box"><i data-lucide="search"></i><input id="orderSearch" placeholder="Search customer or order..."></div>
-<select id="orderFilter"><option value="all">All Orders</option><option value="new">New</option><option value="progress">In Progress</option><option value="ready">Ready</option><option value="collected">Collected</option></select>
+<div class="panel">
+<div class="panel-head">
+<div>
+<h3>Quick Actions</h3>
+<span>Common tasks</span>
 </div>
-<div class="panel"><div id="ordersList"></div></div>
-</section>
-
-<section id="customers" class="page">
-<div class="section-tools">
-<div class="search-box"><i data-lucide="search"></i><input id="customerSearch" placeholder="Search customer..."></div>
 </div>
-<div id="customersGrid" class="customer-grid"></div>
+<div class="quick-grid">
+<button onclick="openNewOrder()"><i data-lucide="plus-circle"></i><span>New Order</span></button>
+<button onclick="showPage('customers')"><i data-lucide="user-plus"></i><span>Customers</span></button>
+<button onclick="showPage('products')"><i data-lucide="shirt"></i><span>Products</span></button>
+<button onclick="showPage('reports')"><i data-lucide="file-chart-column"></i><span>Reports</span></button>
+</div>
+</div>
+
+</div>
 </section>
 
-<section id="products" class="page">
+<section id="page-orders" class="page">
 <div class="section-head">
-<div><h2>Products & Pricing</h2><p>Add, edit or remove your products and prices.</p></div>
-<button class="primary-btn" onclick="openProductModal()"><i data-lucide="plus"></i> Add Product</button>
+<div>
+<h2>Orders</h2>
+<p>Track every tailoring order</p>
 </div>
-<div class="panel"><div id="productsList"></div></div>
+<button class="primary-btn" onclick="openNewOrder()"><i data-lucide="plus"></i>New Order</button>
+</div>
+
+<div class="toolbar">
+<div class="search-box">
+<i data-lucide="search"></i>
+<input id="orderSearch" placeholder="Search customer or order..." oninput="renderOrders()">
+</div>
+<select id="orderFilter" onchange="renderOrders()">
+<option value="all">All Status</option>
+<option value="new">New</option>
+<option value="progress">In Progress</option>
+<option value="ready">Ready</option>
+<option value="collected">Collected</option>
+</select>
+</div>
+
+<div class="panel table-panel">
+<div id="ordersTable"></div>
+</div>
 </section>
 
-<section id="reports" class="page">
+<section id="page-customers" class="page">
+<div class="section-head">
+<div>
+<h2>Customers</h2>
+<p>Customer details, measurements and order history</p>
+</div>
+</div>
+
+<div class="toolbar">
+<div class="search-box">
+<i data-lucide="search"></i>
+<input id="customerSearch" placeholder="Search customers..." oninput="renderCustomers()">
+</div>
+</div>
+
+<div id="customersGrid" class="customers-grid"></div>
+</section>
+
+<section id="page-products" class="page">
+<div class="section-head">
+<div>
+<h2>Products & Pricing</h2>
+<p>Manage your tailoring services and prices</p>
+</div>
+<button class="primary-btn" onclick="openProductModal()"><i data-lucide="plus"></i>Add Product</button>
+</div>
+
+<div id="productsGrid" class="products-grid"></div>
+</section>
+
+<section id="page-reports" class="page">
+<div class="section-head">
+<div>
+<h2>Reports</h2>
+<p>Business performance overview</p>
+</div>
+</div>
+
 <div class="stats-grid">
-<div class="stat-card"><span>Total Revenue</span><strong id="reportRevenue">₹0</strong></div>
-<div class="stat-card"><span>Advance Collected</span><strong id="reportAdvance">₹0</strong></div>
-<div class="stat-card"><span>Outstanding</span><strong id="reportOutstanding">₹0</strong></div>
-<div class="stat-card"><span>Collected Orders</span><strong id="reportCollected">0</strong></div>
+<div class="stat-card">
+<div class="stat-icon sales"><i data-lucide="indian-rupee"></i></div>
+<span>Total Revenue</span>
+<strong id="reportRevenue">₹0</strong>
 </div>
-<div class="panel"><div id="reportDetails"></div></div>
+<div class="stat-card">
+<div class="stat-icon orders"><i data-lucide="receipt"></i></div>
+<span>Total Orders</span>
+<strong id="reportOrders">0</strong>
+</div>
+<div class="stat-card">
+<div class="stat-icon pending"><i data-lucide="clock-3"></i></div>
+<span>Pending Payment</span>
+<strong id="reportPending">₹0</strong>
+</div>
+<div class="stat-card">
+<div class="stat-icon ready"><i data-lucide="check-circle-2"></i></div>
+<span>Completed</span>
+<strong id="reportCompleted">0</strong>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-head">
+<div>
+<h3>Order Summary</h3>
+<span>Current status distribution</span>
+</div>
+</div>
+<div id="reportSummary" class="report-summary"></div>
+</div>
 </section>
 
-<section id="settings" class="page">
-<div class="panel settings-panel">
-<div class="section-head"><div><h2>Business Settings</h2><p>Details shown on customer bills.</p></div></div>
-<div class="form-grid">
-<label>Business Name<input id="setName"></label>
-<label>Tagline<input id="setTagline"></label>
-<label>Phone<input id="setPhone"></label>
-<label>WhatsApp Number<input id="setWhatsapp"></label>
-<label class="full">Address<textarea id="setAddress"></textarea></label>
+<section id="page-settings" class="page">
+<div class="section-head">
+<div>
+<h2>Settings</h2>
+<p>Business information</p>
 </div>
-<button class="primary-btn" onclick="saveSettings()"><i data-lucide="save"></i> Save Settings</button>
+</div>
+
+<div class="settings-card">
+<div class="settings-title">
+<div class="setting-icon"><i data-lucide="store"></i></div>
+<div>
+<h3>Business Profile</h3>
+<p>This information appears on bills.</p>
+</div>
+</div>
+
+<div class="form-grid">
+<label>Business Name<input id="setBusinessName" placeholder="VIJAY TAILOR'S"></label>
+<label>Owner Name<input id="setOwnerName" placeholder="Owner name"></label>
+<label>Phone<input id="setPhone" placeholder="Phone number"></label>
+<label>WhatsApp<input id="setWhatsapp" placeholder="WhatsApp number"></label>
+<label>Address<textarea id="setAddress" placeholder="Shop address"></textarea></label>
+<label>GSTIN<input id="setGSTIN" placeholder="GSTIN"></label>
+<label>Tagline<input id="setTagline" placeholder="MEN'S SPECIALIST"></label>
+</div>
+
+<button class="primary-btn" onclick="saveSettings()"><i data-lucide="save"></i>Save Settings</button>
+</div>
+</section>
+
+<section id="page-new-order" class="page">
+
+<div class="section-head">
+<div>
+<h2>New Order</h2>
+<p>Create a new customer order</p>
+</div>
+<button class="secondary-btn" onclick="showPage('orders')">Cancel</button>
+</div>
+
+<div class="order-layout">
+
+<div class="panel form-panel">
+
+<h3>Customer Details</h3>
+
+<div class="form-grid">
+<label>Customer Name *
+<input id="orderCustomerName" placeholder="Customer name">
+</label>
+
+<label>Phone Number *
+<input id="orderPhone" placeholder="10 digit mobile number">
+</label>
+</div>
+
+<h3 class="form-section-title">Order Details</h3>
+
+<div class="form-grid">
+
+<label>Product *
+<select id="orderProduct" onchange="updateOrderTotal()"></select>
+</label>
+
+<label>Quantity
+<input id="orderQty" type="number" value="1" min="1" onchange="updateOrderTotal()">
+</label>
+
+<label>Advance Payment
+<input id="orderAdvance" type="number" value="0" min="0" onchange="updateOrderTotal()">
+</label>
+
+<label>Delivery Date
+<input id="orderDelivery" type="date">
+</label>
+</div>
+
+<div class="amount-box">
+<div>
+<span>Total</span>
+<strong id="newOrderTotal">₹0</strong>
+</div>
+<div>
+<span>Advance</span>
+<strong id="newOrderAdvance">₹0</strong>
+</div>
+<div>
+<span>Balance</span>
+<strong id="newOrderBalance">₹0</strong>
+</div>
+</div>
+
+<label>Special Instructions
+<textarea id="orderInstructions" placeholder="Any special fitting, cloth, design or customer instructions..."></textarea>
+</label>
+
+<h3 class="form-section-title">Cloth / Sample Photos</h3>
+
+<div class="photo-upload">
+<label class="upload-box">
+<i data-lucide="camera"></i>
+<span>Take / Select Photo</span>
+<input id="orderPhotos" type="file" accept="image/*" capture="environment" multiple onchange="previewPhotos()">
+</label>
+</div>
+
+<div id="photoPreview" class="photo-preview"></div>
+
+<div class="measurement-section">
+<div class="measurement-head">
+<div>
+<h3>Measurements</h3>
+<span>Optional — save for repeat orders</span>
+</div>
+</div>
+
+<div class="measurement-grid">
+<label>Chest<input id="mChest" placeholder="e.g. 40"></label>
+<label>Waist<input id="mWaist" placeholder="e.g. 36"></label>
+<label>Shoulder<input id="mShoulder" placeholder="e.g. 18"></label>
+<label>Sleeve<input id="mSleeve" placeholder="e.g. 24"></label>
+<label>Length<input id="mLength" placeholder="e.g. 28"></label>
+<label>Neck<input id="mNeck" placeholder="e.g. 15"></label>
+</div>
+</div>
+
+<button class="save-order-btn" onclick="saveOrder()">
+<i data-lucide="check"></i>
+Save Order
+</button>
+
+</div>
+
+<div class="panel bill-preview">
+<div class="panel-head">
+<div>
+<h3>Bill Preview</h3>
+<span>Live calculation</span>
+</div>
+<i data-lucide="receipt"></i>
+</div>
+
+<div class="bill-paper">
+<div class="bill-brand">
+<strong id="previewBusinessName">VIJAY TAILOR'S</strong>
+<span id="previewTagline">MEN'S SPECIALIST</span>
+</div>
+
+<div class="bill-line"></div>
+
+<div class="bill-row">
+<span>Customer</span>
+<strong id="previewCustomer">—</strong>
+</div>
+
+<div class="bill-row">
+<span>Product</span>
+<strong id="previewProduct">—</strong>
+</div>
+
+<div class="bill-row">
+<span>Quantity</span>
+<strong id="previewQty">1</strong>
+</div>
+
+<div class="bill-line"></div>
+
+<div class="bill-row">
+<span>Total</span>
+<strong id="previewTotal">₹0</strong>
+</div>
+
+<div class="bill-row">
+<span>Advance</span>
+<strong id="previewAdvance">₹0</strong>
+</div>
+
+<div class="bill-row balance-row">
+<span>Balance</span>
+<strong id="previewBalance">₹0</strong>
+</div>
+
+<div class="bill-footer">
+Thank you for choosing Vijay Tailor's.
+</div>
+</div>
+</div>
+
 </div>
 </section>
 
 </main>
 </div>
 
-<div class="mobile-nav">
-<button class="active" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Home</span></button>
-<button data-page="orders"><i data-lucide="clipboard-list"></i><span>Orders</span></button>
-<button data-page="customers"><i data-lucide="users"></i><span>Customers</span></button>
-<button data-page="products"><i data-lucide="package"></i><span>Products</span></button>
-<button data-page="settings"><i data-lucide="settings"></i><span>Settings</span></button>
-</div>
+<div id="modalRoot"></div>
 
-<div class="modal-backdrop" id="orderModal">
-<div class="modal large-modal">
-<div class="modal-head"><div><h2>New Order</h2><p>Create customer order and bill</p></div><button class="icon-btn" onclick="closeModal('orderModal')"><i data-lucide="x"></i></button></div>
-
-<form id="orderForm">
-<div class="form-section">
-<h3>Customer Details</h3>
-<div class="form-grid">
-<label>Customer Name*<input id="customerName" required></label>
-<label>WhatsApp Number*<input id="customerPhone" required type="tel"></label>
-</div>
-</div>
-
-<div class="form-section">
-<h3>Order Details</h3>
-<div class="order-item-row">
-<select id="orderProduct"></select>
-<input id="orderQty" type="number" min="1" value="1">
-<input id="orderPrice" type="number" min="0" placeholder="Price">
-<button type="button" class="secondary-btn" onclick="addOrderItem()"><i data-lucide="plus"></i>Add</button>
-</div>
-<div id="orderItems"></div>
-</div>
-
-<div class="form-grid">
-<label>Advance Paid<input id="advance" type="number" min="0" value="0"></label>
-<label>Delivery Date<input id="deliveryDate" type="date"></label>
-</div>
-
-<div class="form-section">
-<h3>Cloth Sample</h3>
-<div class="photo-upload">
-<div id="photoPreview" class="photo-preview"><i data-lucide="camera"></i><span>No photo selected</span></div>
-<div><label class="upload-btn"><i data-lucide="image-plus"></i> Add Cloth Photo<input id="clothPhoto" type="file" accept="image/*" capture="environment" hidden></label><button type="button" class="text-btn danger" id="removePhoto" onclick="removePhoto()">Remove photo</button></div>
-</div>
-</div>
-
-<div class="form-section">
-<h3>Customer Instructions</h3>
-<textarea id="instructions" class="big-textarea" placeholder="Enter any special customer instructions..."></textarea>
-</div>
-
-<div class="bill-summary">
-<div><span>Total Amount</span><strong id="orderTotal">₹0</strong></div>
-<div><span>Advance Paid</span><strong id="orderAdvance">₹0</strong></div>
-<div class="balance"><span>Balance Due</span><strong id="orderBalance">₹0</strong></div>
-</div>
-
-<div class="modal-actions"><button type="button" class="secondary-btn" onclick="closeModal('orderModal')">Cancel</button><button class="primary-btn" type="submit"><i data-lucide="check"></i> Save Order</button></div>
-</form>
-</div>
-</div>
-
-<div class="modal-backdrop" id="productModal">
-<div class="modal">
-<div class="modal-head"><div><h2 id="productModalTitle">Add Product</h2><p>Manage product name and price</p></div><button class="icon-btn" onclick="closeModal('productModal')"><i data-lucide="x"></i></button></div>
-<form id="productForm">
-<input id="editProductId" type="hidden">
-<label>Product Name<input id="productName" required></label>
-<label>Price<input id="productPrice" type="number" min="0" required></label>
-<div class="modal-actions"><button type="button" class="secondary-btn" onclick="closeModal('productModal')">Cancel</button><button class="primary-btn"><i data-lucide="save"></i> Save Product</button></div>
-</form>
-</div>
-</div>
-
-<div class="modal-backdrop" id="detailsModal">
-<div class="modal large-modal">
-<div class="modal-head"><div><h2 id="detailsTitle">Customer Details</h2><p id="detailsSubtitle"></p></div><button class="icon-btn" onclick="closeModal('detailsModal')"><i data-lucide="x"></i></button></div>
-<div id="detailsContent"></div>
-</div>
-</div>
+<nav class="mobile-nav">
+<button class="active" onclick="showPage('dashboard')"><i data-lucide="layout-dashboard"></i><span>Home</span></button>
+<button onclick="showPage('orders')"><i data-lucide="clipboard-list"></i><span>Orders</span></button>
+<button class="mobile-add" onclick="openNewOrder()"><i data-lucide="plus"></i></button>
+<button onclick="showPage('customers')"><i data-lucide="users"></i><span>Customers</span></button>
+<button onclick="showPage('settings')"><i data-lucide="settings"></i><span>Settings</span></button>
+</nav>
 
 <script src="app.js"></script>
-<script>lucide.createIcons();</script>
+<script>
+lucide.createIcons();
+</script>
 </body>
 </html>
